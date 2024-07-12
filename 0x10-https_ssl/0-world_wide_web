@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
+<<<<<<< HEAD
 # shellcheck disable=SC2086
+# display information about subdomains
+=======
+<<<<<<< HEAD
+#shellcheck disable=SC2086
 # display information about subdomains
 
 print_dns_info() {
@@ -32,4 +37,52 @@ if [ -z "$subdomain" ]; then
 	done
 else
 	dig_domain "$subdomain" "$domain"
+=======
+# Usage: ./1-world_wide_web <domain> <subdomain>
+# Display information about subdomains.
+>>>>>>> origin/master
+
+print_dns_info() {
+	local SUB_DOMAIN="$1"
+	local RECORD_TYPE="$2"
+	local DESTINATION="$3"
+
+	echo "The subdomain $SUB_DOMAIN is a $RECORD_TYPE record and points to $DESTINATION"
+}
+dig_domain() {
+	local SUB_DOMAIN="$1"
+	local DOMAIN="$2"
+
+	dig_ouput=$(dig "$SUB_DOMAIN.$DOMAIN" | grep -A1 "ANSWER SECTION" | tail -n 1)
+	record=$(echo "$dig_ouput" | awk '{print $4}')
+	ip=$(echo "$dig_ouput" | awk '{print $5}')
+	print_dns_info "$SUB_DOMAIN" "$record" "$ip"
+}
+my_array=("www" "lb-01" "web-01" "web-02")
+if [ $# -lt 1 ]; then
+	exit 1
+fi
+
+domain="$1"
+subdomain="$2"
+
+<<<<<<< HEAD
+if [ -z "$subdomain" ]; then
+	for element in "${my_array[@]}"; do
+		dig_domain "$element" "$domain"
+	done
+else
+	dig_domain "$subdomain" "$domain"
+=======
+if [ "$#" == 1 ]
+then
+  domain_information "$1" "www"
+  domain_information "$1" "lb-01"
+  domain_information "$1" "web-01"
+  domain_information "$1" "web-02"
+elif [ "$#" == 2 ]
+then
+  domain_information "$1" "$2"
+>>>>>>> 36a8a8b944d702cbd6d628af6339959c32d4e21e
+>>>>>>> origin/master
 fi
