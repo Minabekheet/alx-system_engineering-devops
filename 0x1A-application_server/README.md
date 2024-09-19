@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Application Server
 This project contains tasks for learning how to configure a web server (nginx) with an application server (Gunicorn).
 
@@ -86,4 +87,7 @@ To update an application without downtime, the master will proceed with a progre
 
 Write a simple Bash script to reload Gunicorn in a graceful way. This script should be stored in the file 4-reload_gunicorn_no_downtime.
 
+=======
+APPLICATION SERVER
+>>>>>>> origin/master
 
