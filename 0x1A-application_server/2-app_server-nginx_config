@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+ HEAD
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
@@ -25,8 +25,8 @@ server {
 		root /var/www/error/;
 		internal;
 	}
-=======
-erver {
+
+Server {
     listen 80;
     listen [::]:80 default_server;
     add_header X-Served-By 2135-web-01;
@@ -52,5 +52,5 @@ erver {
         # as directory, then fall back to displaying a 404.
         try_files $uri $uri/ =404;
      }
->>>>>>> origin/master
+ origin/master
 }
