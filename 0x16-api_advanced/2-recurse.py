@@ -1,37 +1,31 @@
 #!/usr/bin/python3
+""" Recursive API calls to Redit
 """
-Recursive function that queries the Reddit API and returns
-a list containing the titles of all hot articles for a given subreddit.
-If no results are found for the given subreddit,
-the function should return None.
-"""
-
-import requests
+from requests import get
 
 
-def recurse(subreddit, hot_list=[], after=""):
+def recurse(subreddit, hot_list=[], after=None):
+    """ recursively get all host articles for
+        a given subreddit
     """
-    Queries the Reddit API and returns
-    a list containing the titles of all hot articles for a given subreddit.
+    if subreddit and type(subreddit) is str:
+        url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
+        params = {'after': after, 'limit': 100}
+        headers = {'user-agent': 'my-app/0.0.1'}
 
-    - If not a valid subreddit, return None.
-    """
-    req = requests.get(
-        "https://www.reddit.com/r/{}/hot.json".format(subreddit),
-        headers={"User-Agent": "Custom"},
-        params={"after": after},
-    )
+        req = get(url, params=params, headers=headers, allow_redirects=False)
+        #  get data if request was successful
+        if req.status_code == 200:
+            data = req.json().get('data')
+            after = data.get('after')
+            posts = data.get('children')
 
-    if req.status_code == 200:
-        for get_data in req.json().get("data").get("children"):
-            dat = get_data.get("data")
-            title = dat.get("title")
-            hot_list.append(title)
-        after = req.json().get("data").get("after")
+            #  add article titles to list
+            for post in posts:
+                hot_list.append(post.get('data').get('title'))
 
-        if after is None:
-            return hot_list
-        else:
-            return recurse(subreddit, hot_list, after)
-    else:
-        return None
+            #  call recursive function if there's more data
+            if after:
+                return recurse(subreddit, hot_list, after)
+            else:
+                return hot_list
