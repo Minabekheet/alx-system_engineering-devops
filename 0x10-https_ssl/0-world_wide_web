@@ -4,26 +4,35 @@
 # 	Usage: fetch_subdomains domain subdomains
 # 	Example 1: fetch_subdomains google.com mail
 # 	Example 2: fetch_subdomains google.com 'www images maps mail'
-fetch_subdomains() {
-	domain="$1"
-	subdomains=()
-	readarray -t subdomains < <(echo "$2" | tr ' ' '\n')
-	for ((i = 0; i < "${#subdomains[@]}"; i++)) do
-		subdomain="${subdomains[i]}"
-		output_awk='{print "The subdomain", "'
-		output_awk="$output_awk$subdomain is a"
-		output_awk="$output_awk\", \$7, \"record and points to\", \$8}"
-		dig "$subdomain.$domain" \
-			| grep -A1 'ANSWER SECTION:' \
-			| tr '\n' ' ' \
-			| awk "$output_awk"
-	done
+#!/bin/bash
+
+# Function to display subdomain information
+display_subdomain_info() {
+    local subdomain=$1
+    local domain=$2
+    local record_type
+    local destination
+
+    # Get the DNS information
+    record_info=$(dig +short "$subdomain.$domain")
+
+    # Check if the record exists
+    if [ -n "$record_info" ]; then
+        record_type="A"
+        destination="$record_info"
+        echo "The subdomain $subdomain is a $record_type record and points to $destination"
+    fi
 }
 
-if [ "${#BASH_ARGV[@]}" -ge '2' ]; then
-	fetch_subdomains "$1" "$2"
-elif [ "${#BASH_ARGV[@]}" -ge '1' ]; then
-	fetch_subdomains "$1" "www lb-01 web-01 web-02"
+# Main script logic
+domain=$1
+subdomain=$2
+
+if [ -n "$subdomain" ]; then
+    display_subdomain_info "$subdomain" "$domain"
 else
-	exit
+    for sub in www lb-01 web-01 web-02; do
+        display_subdomain_info "$sub" "$domain"
+    done
 fi
+

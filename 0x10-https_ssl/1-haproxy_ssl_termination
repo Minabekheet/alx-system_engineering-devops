@@ -33,19 +33,16 @@ defaults
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
 
-#--b3zaleel-alx.tech-params-begin--
-frontend b3zaleel-alx.tech-http-frontend
-	bind *:80
-	http-request set-header X-Forwarded-Proto http
-	default_backend b3zaleel-alx.tech-backend
+#--b3zaleel-alx.tech-params-begin-
+frontend http_front
+    bind *:80
+    redirect permanent / https://www.yourdomain.com/
 
-frontend b3zaleel-alx.tech-https-frontend
-	bind *:443 ssl crt /etc/ssl/b3zaleel-alx.tech/b3zaleel-alx.tech.pem
-	http-request set-header X-Forwarded-Proto https
-	default_backend b3zaleel-alx.tech-backend
+frontend https_front
+    bind *:443 ssl crt /etc/letsencrypt/live/www.yourdomain.com/fullchain.pem
+    default_backend web_servers
 
-backend b3zaleel-alx.tech-backend
-	balance roundrobin
-	server web01 34.73.0.174:80 check
-	server web02 35.196.78.105:80 check
-#--b3zaleel-alx.tech-params-end--
+backend web_servers
+    server web-01 34.198.248.145:80 check
+    server web-02 54.89.38.100:80 check
+-
